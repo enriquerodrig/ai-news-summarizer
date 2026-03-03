@@ -40,9 +40,10 @@ ENV PATH=/root/.local/bin:$PATH
 # Expose port (configurable via environment variable)
 EXPOSE 8080
 
-# Health check - increased timeout and start period for Railway
+
+# Health check - use PORT env var or default to 8080
 HEALTHCHECK --interval=30s --timeout=30s --start-period=120s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/health').read()"
+    CMD python -c "import os, urllib.request; port = os.environ.get('PORT', '8080'); urllib.request.urlopen(f'http://localhost:{port}/api/health').read()"
 
 # Run the application with startup script
 CMD ["bash", "./start.sh"]
