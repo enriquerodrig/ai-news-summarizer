@@ -1,9 +1,13 @@
 #!/bin/bash
 # Startup script for Railway deployment
-# Handles PORT environment variable properly
 
-# Use Railway's PORT if set, otherwise default to 8080
-PORT=${PORT:-8080}
+# Railway provides PORT as an environment variable
+# If not set (local development), default to 8080
+if [ -z "$PORT" ]; then
+    PORT=8080
+fi
 
-# Start uvicorn with the resolved port
-exec python -m uvicorn app.main:app --host 0.0.0.0 --port "$PORT"
+echo "Starting application on port $PORT"
+
+# Start uvicorn
+exec python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
