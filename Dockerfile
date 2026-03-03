@@ -36,8 +36,8 @@ ENV PATH=/root/.local/bin:$PATH
 # Expose port (configurable via environment variable)
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+# Health check - increased timeout and start period for Railway
+HEALTHCHECK --interval=30s --timeout=30s --start-period=120s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/health').read()"
 
 # Run the application with uvicorn
