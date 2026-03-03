@@ -369,8 +369,14 @@ if __name__ == "__main__":
     import uvicorn
     import os
 
-    port = int(os.environ.get("PORT", config.port))
-    logger.info(f"Starting server on port {port}")
+    env_port = os.environ.get("PORT")
+    logger.info(f"[Startup] Environment variable PORT: {env_port}")
+    try:
+        port = int(env_port) if env_port else int(config.port)
+    except Exception as e:
+        logger.error(f"[Startup] Invalid PORT value: {env_port}. Error: {e}. Falling back to 8080.")
+        port = 8080
+    logger.info(f"[Startup] Starting server on port {port}")
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",
