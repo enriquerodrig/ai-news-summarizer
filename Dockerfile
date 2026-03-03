@@ -30,6 +30,10 @@ COPY --from=builder /root/.local /root/.local
 # Copy application code
 COPY app/ ./app/
 
+# Copy startup script
+COPY start.sh ./start.sh
+RUN chmod +x start.sh
+
 # Make sure scripts in .local are usable
 ENV PATH=/root/.local/bin:$PATH
 
@@ -40,6 +44,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=30s --start-period=120s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/health').read()"
 
-# Run the application with uvicorn
-# Use shell form to allow PORT environment variable expansion
-CMD python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}
+# Run the application with startup script
+CMD ["bash", "./start.sh"]
