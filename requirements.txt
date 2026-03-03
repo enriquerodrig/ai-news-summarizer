@@ -7,12 +7,6 @@ python-multipart==0.0.6
 pydantic==2.5.3
 pydantic-settings==2.1.0
 
-# AI and NLP
-transformers==4.36.2
-torch==2.1.2
-sentencepiece==0.1.99
-accelerate==0.25.0
-
 # HTTP Client
 httpx==0.26.0
 
