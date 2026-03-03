@@ -184,7 +184,13 @@ class AppConfig(BaseSettings):
     huggingface_token: str
     
     # Optional with defaults
-    mcp_server_url: str = "http://localhost:3000"  # Not used, RSS feeds are direct
+    mcp_server_url: str = (
+        "https://news.ycombinator.com/rss,"
+        "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml,"
+        "https://feeds.bbci.co.uk/news/technology/rss.xml,"
+        "https://www.theverge.com/rss/index.xml,"
+        "https://www.reddit.com/r/worldnews/.rss"
+    )  # Default to public news RSS feeds
     port: int = 8080
     cache_ttl_minutes: int = 30
     news_refresh_minutes: int = 30
