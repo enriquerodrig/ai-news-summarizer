@@ -41,29 +41,26 @@ class RSSFeedClient:
         logger.info(f"RSSFeedClient initialized with {len(feed_urls)} feeds")
     
     async def connect(self) -> bool:
-        """Verify RSS feeds are accessible.
-        
-        Returns:
-            bool: True if at least one feed is accessible
-        """
-        try:
-            # Test connectivity by fetching one feed
-            if not self.feed_urls:
-                logger.error("No RSS feed URLs configured")
-                return False
-            
-            async with httpx.AsyncClient(timeout=10.0) as client:
-                response = await client.get(self.feed_urls[0])
-                if response.status_code == 200:
-                    self.connected = True
-                    logger.info("RSS feeds are accessible")
-                    return True
-                else:
-                    logger.error(f"RSS feed returned status {response.status_code}")
-                    return False
-        except Exception as e:
-            logger.error(f"Failed to connect to RSS feeds: {str(e)}")
+        """Verify RSS feeds are accessible, with detailed logging for each URL."""
+        if not self.feed_urls:
+            logger.error("No RSS feed URLs configured")
             return False
+
+        at_least_one_success = False
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            for url in self.feed_urls:
+                try:
+                    logger.info(f"[RSSFeedClient] Attempting to connect to: {url}")
+                    response = await client.get(url)
+                    if response.status_code == 200:
+                        logger.info(f"[RSSFeedClient] Successfully connected to: {url}")
+                        at_least_one_success = True
+                    else:
+                        logger.error(f"[RSSFeedClient] Failed to connect to {url}: Status {response.status_code}")
+                except Exception as e:
+                    logger.error(f"[RSSFeedClient] Exception connecting to {url}: {str(e)}")
+        self.connected = at_least_one_success
+        return at_least_one_success
     
     async def fetch_articles(self, hours: int = 24) -> List[Article]:
         """Fetch articles from all configured RSS feeds.
