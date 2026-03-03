@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  ai-news-summarizer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-news-summarizer
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
+      - MCP_SERVER_URL=${MCP_SERVER_URL}
+      - PORT=${PORT:-8080}
+      - CACHE_TTL_MINUTES=${CACHE_TTL_MINUTES:-30}
+      - NEWS_REFRESH_MINUTES=${NEWS_REFRESH_MINUTES:-30}
+      - MAX_CONCURRENT_SUMMARIES=${MAX_CONCURRENT_SUMMARIES:-50}
+      - MEMORY_LIMIT_MB=${MEMORY_LIMIT_MB:-512}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/health').read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    mem_limit: 512m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

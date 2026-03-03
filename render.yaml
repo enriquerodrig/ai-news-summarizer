@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: ai-news-summarizer
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    region: oregon
+    branch: main
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: HUGGINGFACE_TOKEN
+        sync: false
+      - key: MCP_SERVER_URL
+        sync: false
+      - key: PORT
+        value: 8080
+      - key: CACHE_TTL_MINUTES
+        value: 30
+      - key: NEWS_REFRESH_MINUTES
+        value: 30
+      - key: MAX_CONCURRENT_SUMMARIES
+        value: 50
+      - key: MEMORY_LIMIT_MB
+        value: 512
+      - key: LOG_LEVEL
+        value: INFO
