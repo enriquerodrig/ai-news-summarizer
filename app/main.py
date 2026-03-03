@@ -367,11 +367,13 @@ async def general_exception_handler(request, exc):
 
 if __name__ == "__main__":
     import uvicorn
-    
-    logger.info(f"Starting server on port {config.port}")
+    import os
+
+    port = int(os.environ.get("PORT", config.port))
+    logger.info(f"Starting server on port {port}")
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",
-        port=config.port,
+        port=port,
         log_level=config.log_level.lower()
     )
